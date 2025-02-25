@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-const Blog = ({ blog, handleLike }) => {
+const Blog = ({ blog, handleLike, handleDelete}) => {
 
   const [visibleDetails, setVisibleDetails] = useState(false)
   
@@ -22,10 +22,21 @@ const Blog = ({ blog, handleLike }) => {
       console.error("Error: Blog or Blog ID is undefined!");
       return;
     }
-    
+
     const updatedBlog = {...blog, likes: blog.likes + 1}
     handleLike(blog.id, updatedBlog)
   } 
+
+  const deleteBlog = () => {
+
+    if (!blog || !blog.id) {
+      console.error("Error: Blog or Blog ID is undefined!");
+      return;
+    }
+
+    handleDelete(blog.id)
+
+  }
 
 
   return (
@@ -37,6 +48,7 @@ const Blog = ({ blog, handleLike }) => {
           <div>{blog.url}</div>
           <div>{blog.likes} <button onClick={increaseLikes}>like</button></div>
           <div>{blog.author}</div>
+          <div><button onClick={deleteBlog}>remove</button></div>
         </div>
       )}
       </div>

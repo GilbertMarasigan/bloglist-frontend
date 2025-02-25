@@ -60,6 +60,7 @@ const App = () => {
   }
 
   const handleLike = async (id, updatedBlog) => {
+    
     console.log('add like')
 
     if (!id) {
@@ -75,6 +76,29 @@ const App = () => {
       setBlogs((prevBlogs) =>
         prevBlogs.map((blog) => (blog.id === id ? returnedBlog : blog))
       )
+    } catch (error) {
+      console.log('error', error)
+    }
+  }
+
+  const handleDelete = async (id) => {
+
+    console.log('delete blog')
+
+    if (!id) {
+      console.error("Error: Blog ID is undefined!");
+      return;
+    }
+
+    try {
+      blogService.setToken(user.token)
+      
+      const deleteBlog = await blogService.deleteBlog(id)
+
+      setBlogs((prevBlogs) =>
+        prevBlogs.filter(blog => blog.id !==id)
+      )
+
     } catch (error) {
       console.log('error', error)
     }
@@ -118,7 +142,7 @@ const App = () => {
   const blogList = () => (
     <div>
       {blogs.map(blog => (
-        <Blog key={blog.id} blog={blog} handleLike={handleLike} />
+        <Blog key={blog.id} blog={blog} handleLike={handleLike} handleDelete={handleDelete} />
       ))}
     </div>
   )
