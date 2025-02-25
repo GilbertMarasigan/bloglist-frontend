@@ -1,8 +1,8 @@
-import { useState } from "react"
+import { useState } from 'react'
 
 const BlogForm = ({ addBlog }) => {
 
-    const [newBlog, setNewBlog] = useState({ title: "", author: "", url: "" })
+    const [newBlog, setNewBlog] = useState({ title: '', author: '', url: '' })
 
     const handleChange = (e) => {
         const { name, value } = e.target
@@ -12,7 +12,7 @@ const BlogForm = ({ addBlog }) => {
     const handleSubmit = (e) => {
         e.preventDefault()
         addBlog(newBlog)
-        setNewBlog({ title: "", author: "", url: "" }) 
+        setNewBlog({ title: '', author: '', url: '' })
     }
 
     return (
