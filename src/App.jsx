@@ -33,7 +33,7 @@ const App = () => {
         if (decodedToken.exp * 1000 < Date.now()) {
           console.log('Token expired, logging out');
           setUser(null);
-          window.localStorage.clear(); 
+          window.localStorage.clear();
         } else {
           setUser(user);
           blogService.setToken(user.token);
@@ -41,7 +41,7 @@ const App = () => {
       } catch (error) {
         console.error('Error parsing stored user:', error);
         setUser(null);
-        window.localStorage.clear(); 
+        window.localStorage.clear();
       }
     }
   }, [])
@@ -55,6 +55,28 @@ const App = () => {
     } catch (error) {
       console.log('error', error)
     }
+  }
+
+  const handleLike = async (id, updatedBlog) => {
+    console.log('add like')
+
+    if (!id) {
+      console.error("Error: Blog ID is undefined!");
+      return;
+    }
+
+
+    try {
+      blogService.setToken(user.token)
+      const returnedBlog = await blogService.update(id, updatedBlog)
+
+      setBlogs((prevBlogs) =>
+        prevBlogs.map((blog) => (blog.id === id ? returnedBlog : blog))
+      )
+    } catch (error) {
+      console.log('error', error)
+    }
+
   }
 
   const handleLogin = async (event) => {
@@ -94,7 +116,7 @@ const App = () => {
   const blogList = () => (
     <div>
       {blogs.map(blog => (
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} handleLike={handleLike} />
       ))}
     </div>
   )
