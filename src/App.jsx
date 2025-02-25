@@ -8,7 +8,6 @@ import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 
 const App = () => {
-  const [loginVisible, setLoginVisible] = useState(false)
   const [blogs, setBlogs] = useState([])
   const [errorMessage, setErrorMessage] = useState(null)
   const [username, setUsername] = useState('')
@@ -25,31 +24,38 @@ const App = () => {
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
     console.log('stored user: ', loggedUserJSON)
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      const decodedToken = JSON.parse(atob(user.token.split('.')[1]))
 
-      if (decodedToken.exp * 1000 < Date.now()) {
-        console.log('Token expired, logging out')
-        handleLogout()
-      }
-      else {
-        setUser(user)
-        blogService.setToken(user.token)
+    if (loggedUserJSON) {
+      try {
+        const user = JSON.parse(loggedUserJSON);
+        const decodedToken = JSON.parse(atob(user.token.split('.')[1]));
+
+        if (decodedToken.exp * 1000 < Date.now()) {
+          console.log('Token expired, logging out');
+          setUser(null);
+          window.localStorage.clear(); 
+        } else {
+          setUser(user);
+          blogService.setToken(user.token);
+        }
+      } catch (error) {
+        console.error('Error parsing stored user:', error);
+        setUser(null);
+        window.localStorage.clear(); 
       }
     }
   }, [])
 
-  const addBlog = async (blogData) => { 
+  const addBlog = async (blogData) => {
     try {
       blogService.setToken(user.token)
-      const returnedBlog = await blogService.create(blogData) 
+      const returnedBlog = await blogService.create(blogData)
 
       setBlogs((prevBlogs) => [...prevBlogs, returnedBlog])
     } catch (error) {
       console.log('error', error)
     }
-}
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -81,22 +87,18 @@ const App = () => {
 
   const handleLogout = (event) => {
     console.log(`loggin out ${user.name}`)
-    window.localStorage.clear()
     setUser(null)
+    window.localStorage.clear()
   }
 
   const blogList = () => (
     <div>
-      <h2>blogs</h2>
-      <div className='user-info'>
-        {user.name} logged in  <button type='button' onClick={handleLogout}>logout</button>
-      </div>
-      {console.log('blogList', blogs)}
-      {blogs.map(blog =>
-        (<Blog key={blog.id} blog={blog} />)
-      )}
+      {blogs.map(blog => (
+        <Blog key={blog.id} blog={blog} />
+      ))}
     </div>
   )
+
   return (
     <div>
       <Notification message={errorMessage} />
@@ -112,8 +114,14 @@ const App = () => {
         </Togglable>
       ) : (
         <>
+          <h2>blogs</h2>
+          <div className='user-info'>
+            {user.name} logged in  <button type='button' onClick={handleLogout}>logout</button>
+          </div>
+          <Togglable buttonLabel='create new blog'>
+            <BlogForm addBlog={addBlog} />
+          </Togglable>
           {blogList()}
-          <BlogForm addBlog={addBlog} />
         </>
       )}
     </div>
