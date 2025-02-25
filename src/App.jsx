@@ -17,7 +17,7 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs => {
-      const sortedBlogs = blogs.sort((a, b) => b.likes -  a.likes)
+      const sortedBlogs = blogs.sort((a, b) => b.likes - a.likes)
       setBlogs(sortedBlogs)
     }
     )
@@ -60,7 +60,7 @@ const App = () => {
   }
 
   const handleLike = async (id, updatedBlog) => {
-    
+
     console.log('add like')
 
     if (!id) {
@@ -92,15 +92,27 @@ const App = () => {
 
     try {
       blogService.setToken(user.token)
-      
+
       const deleteBlog = await blogService.deleteBlog(id)
 
       setBlogs((prevBlogs) =>
-        prevBlogs.filter(blog => blog.id !==id)
+        prevBlogs.filter(blog => blog.id !== id)
       )
 
     } catch (error) {
+
       console.log('error', error)
+
+      const errorMsg = 'Blogs can only be deleted by author'
+
+      if (error.response.data.error == errorMsg) {
+
+        setErrorMessage(errorMsg)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      }
+
     }
 
   }
@@ -142,7 +154,7 @@ const App = () => {
   const blogList = () => (
     <div>
       {blogs.map(blog => (
-        <Blog key={blog.id} blog={blog} handleLike={handleLike} handleDelete={handleDelete} />
+        <Blog key={blog.id} blog={blog} handleLike={handleLike} handleDelete={handleDelete} user={user} />
       ))}
     </div>
   )

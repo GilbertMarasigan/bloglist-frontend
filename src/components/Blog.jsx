@@ -1,9 +1,9 @@
 import { useState } from "react"
 
-const Blog = ({ blog, handleLike, handleDelete}) => {
+const Blog = ({ blog, handleLike, handleDelete, user }) => {
 
   const [visibleDetails, setVisibleDetails] = useState(false)
-  
+
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -23,9 +23,9 @@ const Blog = ({ blog, handleLike, handleDelete}) => {
       return;
     }
 
-    const updatedBlog = {...blog, likes: blog.likes + 1}
+    const updatedBlog = { ...blog, likes: blog.likes + 1 }
     handleLike(blog.id, updatedBlog)
-  } 
+  }
 
   const deleteBlog = () => {
 
@@ -34,9 +34,13 @@ const Blog = ({ blog, handleLike, handleDelete}) => {
       return;
     }
 
-    handleDelete(blog.id)
+    window.confirm(`Remove ${blog.title}`) && handleDelete(blog.id)
 
   }
+
+  const showRemoveButton = user && blog.user.username === user.username
+
+  console.log(`is from ${blog.author}`)
 
 
   return (
@@ -44,13 +48,15 @@ const Blog = ({ blog, handleLike, handleDelete}) => {
       <div>
         {blog.title}<button onClick={toggleDetails}>view</button>
         {visibleDetails && (
-        <div>
-          <div>{blog.url}</div>
-          <div>{blog.likes} <button onClick={increaseLikes}>like</button></div>
-          <div>{blog.author}</div>
-          <div><button onClick={deleteBlog}>remove</button></div>
-        </div>
-      )}
+          <div>
+            <div>{blog.url}</div>
+            <div>{blog.likes} <button onClick={increaseLikes}>like</button></div>
+            <div>{blog.author}</div>
+            <div>
+              {showRemoveButton && <button onClick={deleteBlog}>remove</button>}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
