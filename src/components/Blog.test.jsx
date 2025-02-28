@@ -2,16 +2,16 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
+const blog = {
+    'title': 'The Lean Startup',
+    'author': 'Eric Ries',
+    'url': 'https://theleanstartup.com/',
+    'likes': 5
+}
+
 describe('<Blog />', () => {
 
     let container
-
-    const blog = {
-        'title': 'The Lean Startup',
-        'author': 'Eric Ries',
-        'url': 'https://theleanstartup.com/',
-        'likes': 5
-    }
 
     beforeEach(() => {
         container = render(<Blog blog={blog} />).container
@@ -37,10 +37,43 @@ describe('<Blog />', () => {
         expect(likes).toBeDefined()
         expect(url).toBeDefined()
 
-        screen.debug()
-
     })
+
 
 })
 
+describe('<Blog />', () => {
+    test('clicking the like button twice calls event handler twice', async () => {
+        const likeTwice = vi.fn() // Create a mock function
 
+        const blog = {
+            id: '123',  // Ensure an ID exists
+            title: 'The Lean Startup',
+            author: 'Eric Ries',
+            url: 'https://theleanstartup.com/',
+            likes: 5,
+            user: { username: 'testuser' }
+        }
+
+        const user = { username: 'testuser' } // Mock user data
+
+        render(<Blog blog={blog} handleLike={likeTwice} handleDelete={vi.fn()} user={user} />)
+
+        const userEventInstance = userEvent.setup()
+
+
+        expect(screen.getByText('view')).toBeInTheDocument()
+
+
+        const viewButton = screen.getByText('view')
+        await userEventInstance.click(viewButton)
+
+        const likeButton = screen.getByText('like')
+        expect(likeButton).toBeInTheDocument()
+
+        await userEventInstance.click(likeButton)
+        await userEventInstance.click(likeButton)
+
+        expect(likeTwice).toHaveBeenCalledTimes(2)
+    })
+})
