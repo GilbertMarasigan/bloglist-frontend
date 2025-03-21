@@ -21,12 +21,14 @@ const BlogForm = ({ addBlog }) => {
                 <h2>create new</h2>
                 <div>
                     title: <input type="text"
+                        data-testid='title'
                         name='title'
                         value={newBlog.title}
                         onChange={handleChange} />
                 </div>
                 <div>
                     author: <input type="text"
+                        data-testid='author'
                         name='author'
                         value={newBlog.author}
                         onChange={handleChange} />
@@ -34,6 +36,7 @@ const BlogForm = ({ addBlog }) => {
 
                 <div>
                     url: <input type="text"
+                        data-testid='url'
                         name='url'
                         value={newBlog.url}
                         onChange={handleChange} />

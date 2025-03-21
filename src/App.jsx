@@ -74,7 +74,9 @@ const App = () => {
             const returnedBlog = await blogService.update(id, updatedBlog)
 
             setBlogs((prevBlogs) =>
-                prevBlogs.map((blog) => (blog.id === id ? returnedBlog : blog))
+                prevBlogs
+                    .map((blog) => (blog.id === id ? returnedBlog : blog))
+                    .sort((a, b) => b.likes - a.likes)
             )
         } catch (error) {
             console.log('error', error)
